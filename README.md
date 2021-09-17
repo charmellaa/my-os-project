@@ -1,1 +1,1 @@
-# my-os-project
+# Project for Operating Systems SY 2020-2021
