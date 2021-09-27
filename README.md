@@ -1,3 +1,3 @@
 # My OS Project
 
-This will be the repository for my project *Operating Systems* A.Y. 2020-2021, taught by professors Giorgio Grisetti and Barbara Bazzana.
+This will be the repository for my project for *Operating Systems* course taught by professors Giorgio Grisetti and Barbara Bazzana.
