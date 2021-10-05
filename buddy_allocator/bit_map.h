@@ -20,3 +20,19 @@ void BitMap_setBit(BitMap* bit_map, int bit_num, int status);
 
 // inspects the status of the bit bit_num
 int BitMap_bit(const BitMap* bit_map, int bit_num);
+
+//helpers for bitmap implementation
+
+//returns which level node idx is in
+int levelIdx(int idx);
+
+//returns index of node idx's buddy
+int buddyIdx(int idx);
+
+//returns index of node idx's parent
+int parentIdx(int idx);
+
+//returns the offset of node idx in his level
+int startIdx(int idx);
+
+

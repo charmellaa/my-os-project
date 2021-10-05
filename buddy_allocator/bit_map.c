@@ -1,5 +1,32 @@
 #include <assert.h>
 #include "bit_map.h"
+#include <math.h>
+
+
+//returns which level node idx is in
+int levelIdx(int idx) {
+	return (int)floor(log2(idx));
+};
+
+//returns index of node idx's buddy
+int buddyIdx(int idx) {
+	//checks if idx is even or odd
+	if (idx&0x1) {
+		return idx-1;
+	}
+	return idx+1;
+};
+
+//returns index of node idx's parent
+int parentIdx(int idx) {
+	return idx/2;
+};
+
+//returns the offset of node idx in his level
+int startIdx(int idx) {
+	return (idx-(1<<levelIdx(idx)));
+};
+
 
 // returns the number of bytes to store bits booleans
 int BitMap_getBytes(int bits){
