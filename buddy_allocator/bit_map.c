@@ -1,7 +1,8 @@
 #include <assert.h>
 #include "bit_map.h"
 #include <math.h>
-
+#include <stdio.h>
+#include <stdlib.h>
 
 //returns which level node idx is in
 int levelIdx(int idx) {
@@ -30,7 +31,7 @@ int startIdx(int idx) {
 
 // returns the number of bytes to store bits booleans
 int BitMap_getBytes(int bits){
-  return bits/8 + (bits%8)!=0;
+  return bits/8 + ((bits%8)!=0);
 }
 
 // initializes a bitmap on an external array

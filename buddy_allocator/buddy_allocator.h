@@ -18,7 +18,7 @@ int BuddyAllocator_calcSize(int num_levels);
 // initializes the buddy allocator, and checks that the buffer is large enough
 void BuddyAllocator_init(BuddyAllocator* alloc,
                          int num_levels,
-                         char* buffer,
+                         uint8_t* buffer,
                          int buffer_size,
                          char* memory,
                          int min_bucket_size);
