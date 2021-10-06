@@ -61,7 +61,7 @@ void BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   memory_size=memory_size/2;
   //until size is bigger than memory_size, I continue to divide
   //at the same time, level increases
-  while(size<=memory_size) {
+  while(size<=memory_size && level<alloc->num_levels) {
 	level++;
 	memory_size=memory_size/2;
   }

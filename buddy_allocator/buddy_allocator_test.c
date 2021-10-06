@@ -27,6 +27,12 @@ int main(int argc, char** argv) {
 
   printf("First try: allocating 100000\n");
   BuddyAllocator_malloc(&alloc, 100000);
+  printf("Second try: allocating 512\n");
+  BuddyAllocator_malloc(&alloc, 512);
+  printf("Second try: allocating 100\n");
+  BuddyAllocator_malloc(&alloc, 100);
+  printf("Last try: allocating 1000000\n");
+  BuddyAllocator_malloc(&alloc, 1000000);
   printf("DONE\n");
 /*
   void* p1=BuddyAllocator_malloc(&alloc, 100);
