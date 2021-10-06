@@ -6,7 +6,7 @@
 #define MEMORY_SIZE (1024*1024)
 #define MIN_BUCKET_SIZE (MEMORY_SIZE>>(BUDDY_LEVELS))
 
-char buffer[BUFFER_SIZE]; // 100 Kb buffer to handle memory should be enough
+uint8_t buffer[BUFFER_SIZE]; // 100 Kb buffer to handle memory should be enough
 char memory[MEMORY_SIZE];
 
 BuddyAllocator alloc;
@@ -24,12 +24,12 @@ int main(int argc, char** argv) {
                       memory,
                       MIN_BUCKET_SIZE);
   printf("DONE\n");
-
+/*
   void* p1=BuddyAllocator_malloc(&alloc, 100);
   void* p2=BuddyAllocator_malloc(&alloc, 100);
   void* p3=BuddyAllocator_malloc(&alloc, 100000);
   BuddyAllocator_free(&alloc, p1);
   BuddyAllocator_free(&alloc, p2);
-  BuddyAllocator_free(&alloc, p3);
+  BuddyAllocator_free(&alloc, p3);*/
   
 }
