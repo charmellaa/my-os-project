@@ -24,6 +24,10 @@ int main(int argc, char** argv) {
                       memory,
                       MIN_BUCKET_SIZE);
   printf("DONE\n");
+
+  printf("First try: allocating 100000\n");
+  BuddyAllocator_malloc(&alloc, 100000);
+  printf("DONE\n");
 /*
   void* p1=BuddyAllocator_malloc(&alloc, 100);
   void* p2=BuddyAllocator_malloc(&alloc, 100);

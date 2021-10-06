@@ -15,7 +15,7 @@ void BuddyAllocator_init(BuddyAllocator* alloc, //the allocator
                          int num_levels, //number of levels of the b-tree
                          uint8_t* buffer, //the bitmap
                          int buffer_size, //bitmap's size in bytes
-                         char* memory, //memory for the allocator
+                         char* memory,
                          int min_bucket_size) { //size of each blocks 
 
   // we need room also for level 0
@@ -44,6 +44,34 @@ void BuddyAllocator_init(BuddyAllocator* alloc, //the allocator
   printf("Buddy and bitmap initialized successfully!\n");
 
   
+}
+
+void BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
+  printf("Allocating requested size: %d bytes...\n", size);
+  int new_size = size + 4; //adding 4 bytes to store the index
+  int memory_size = (1<<alloc->num_levels)*alloc->min_bucket_size; 
+  //checking if size to be allocated is bigger than memory available
+  if (new_size > memory_size) {
+	printf("Not enough memory! Breaking..\n");
+	return; 
+	}
+  //if everything's ok
+  int level = 0;
+  //dividing the memory in half
+  memory_size=memory_size/2;
+  //until size is bigger than memory_size, I continue to divide
+  //at the same time, level increases
+  while(size<=memory_size) {
+	level++;
+	memory_size=memory_size/2;
+  }
+  printf("Level chosen: %d\n", level);
+  
+
+  
+
+
+
 }
 
 
