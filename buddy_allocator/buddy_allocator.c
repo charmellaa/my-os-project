@@ -50,37 +50,47 @@ void BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   printf("Allocating requested size: %d bytes...\n", size);
   int new_size = size + 4; //adding 4 bytes to store the index
   int memory_size = (1<<alloc->num_levels)*alloc->min_bucket_size; 
-  //checking if size to be allocated is bigger than memory available
-  if (new_size > memory_size) {
-	printf("Not enough memory! Breaking..\n");
+  //checking if size requested is bigger than memory available
+if (new_size > memory_size) {
+	printf("Not enough memory! Failed allocating..\n");
 	return; 
 	}
-  //if everything's ok
+  //if everything's ok, i start at the first level
   int level = 0;
-  //dividing the memory in half
   memory_size=memory_size/2;
-  //until size is bigger than memory_size, I continue to divide
+  //as long as size is bigger than memory_size,
+  //and I don't surpass num_levels
+  // I continue to divide
   //at the same time, level increases
-  while(size<=memory_size && level<alloc->num_levels) {
+  while(new_size<=memory_size && level<alloc->num_levels) {
 	level++;
 	memory_size=memory_size/2;
   }
+  
   printf("Level chosen: %d\n", level);
-  
-
-  
-
-
+  //now look for a free spot on the given level
+  BuddyAllocator_getBuddy(alloc, level);
+if (!spot) { //no free spots found 
+	return;
+  }
 
 }
 
+int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
+  //Checking level size
+  int lsize = (1<<(alloc->num_levels-level))*alloc->min_bucket_size;
+  printf("Level: %d\t Size: %d\n", level, lsize);
+  //now I have to scan this level to see if i find a free spot
+  //once I find one, I have to check that all of its parents are free
+  //and all of its children are free
+  //finally I allocate
 
-/*int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level){
-  if (level<0)
-    return 0;
-  assert(level <= alloc->num_levels);
+//------ TBC-----
+  }
+  
+	
 
- //To do...
+/*
 
 void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc){
 //To do..
@@ -123,6 +133,6 @@ void BuddyAllocator_free(BuddyAllocator* alloc, void* mem) {
   assert(buddy->start==p);
   BuddyAllocator_releaseBuddy(alloc, buddy);
   
-}*/
+}*/ 
 
 

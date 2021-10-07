@@ -26,7 +26,7 @@ void BuddyAllocator_init(BuddyAllocator* alloc,
 // returns (allocates) a buddy at a given level.
 // side effect on the internal structures
 // 0 id no memory available
-int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level);
+void BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level);
 
 
 // releases an allocated buddy, performing the necessary joins
