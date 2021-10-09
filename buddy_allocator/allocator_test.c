@@ -20,23 +20,40 @@ int main(int argc, char** argv) {
                       memory,
                       MIN_BUCKET_SIZE);
   printf("DONE\n");
-  BuddyAllocator_malloc(&alloc, 20);
+  void* p1 = BuddyAllocator_malloc(&alloc, 20);
+  printf("Address allocated: %p\n", p1);
+  //just checking
+  //printf("index allocated %d\n", *(int*)((char*)p1 - 4));
   printf("\n------\n");
-  BuddyAllocator_malloc(&alloc, 10);
+
+  void* p2 = BuddyAllocator_malloc(&alloc, 10);
+  printf("Address allocated: %p\n", p2);
+  //printf("index allocated %d\n", *(int*)((char*)p2 - 4));
   printf("\n------\n");
-  BuddyAllocator_malloc(&alloc,55);
+
+  void* p3 = BuddyAllocator_malloc(&alloc,55);
+  printf("Address allocated: %p\n", p3);
   printf("\n------\n");
-  BuddyAllocator_malloc(&alloc,128);
+
+  void* p4 = BuddyAllocator_malloc(&alloc,128);
+  printf("Address allocated: %p\n", p4);
   printf("\n------\n");
-  BuddyAllocator_malloc(&alloc, 22);
-  printf("\n------\n");
-  BuddyAllocator_malloc(&alloc, 22);
-  printf("\n------\n");
-  BuddyAllocator_malloc(&alloc, 55);
-  printf("\n------\n");
-  BuddyAllocator_malloc(&alloc, 22);
+
+  void* p5 = BuddyAllocator_malloc(&alloc, 22);
+  printf("Address allocated: %p\n", p5);
   printf("\n------\n");
  
+  void* p6 = BuddyAllocator_malloc(&alloc, 22);
+  printf("Address allocated: %p\n", p6);
+  printf("\n------\n");
+
+  void* p7 = BuddyAllocator_malloc(&alloc, 55);
+  printf("Address allocated: %p\n", p7);
+  printf("\n------\n");
+ 
+  void* p8 = BuddyAllocator_malloc(&alloc, 22);
+  printf("Address allocated: %p\n", p8);
+  printf("\n------\n");
 
 }
   

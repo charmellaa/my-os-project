@@ -46,14 +46,14 @@ void BuddyAllocator_init(BuddyAllocator* alloc, //the allocator
   
 }
 
-void BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
+void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   printf("Allocating requested size: %d bytes...\n", size);
   int new_size = size + 4; //adding 4 bytes to store the index
   int memory_size = (1<<alloc->num_levels)*alloc->min_bucket_size; 
   //checking if size requested is bigger than memory available
   if (new_size > memory_size) {
 	printf("Not enough memory! Allocating failed.\n");
-	return; 
+	return NULL; 
 	}
   //if everything's ok, i start at the first level
   int level = 0;
@@ -68,19 +68,34 @@ void BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   }
   
   printf("Level chosen: %d\n", level);
+  //Checking block size on this level
+  int block_size = (1<<(alloc->num_levels-level))*alloc->min_bucket_size;
+  printf("Block size: %d\n", block_size);
+  
   //now look for a free spot on the given level
   int spot = BuddyAllocator_getBuddy(alloc, level);
   if (!spot) { //no free spots found 
-	return;
+	return NULL;
   }
+
+  //address of block chosen 
+  int offset = startIdx(spot);
+  char* address = alloc->memory + (offset*block_size);
+  printf("Original given address is %p\n", address);
+ 
+  //write the index on the first 4 bytes of the block chosen
+  *((int*) address) = spot;
+
+  //just checking
+  //printf("index allocated %d\n", *((int*)address));
+
+
+  //we return the address + sizeof(int);
+  return (void*) (address+4);
 
 }
 
 int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
-  //Checking level size
-  int lsize = (1<<(alloc->num_levels-level))*alloc->min_bucket_size;
-  printf("Block size: %d\n", lsize);
-
   //first index of this level
   int firstIdx = 1<<level;
   //and the last one
@@ -144,9 +159,6 @@ void BuddyAllocator_free(BuddyAllocator* alloc, void* mem) {
   // we retrieve the buddy from the system
   char* p=(char*) mem;
   p=p-8;
-  BuddyListItem** buddy_ptr=(BuddyListItem**)p;
-  BuddyListItem* buddy=*buddy_ptr;
-  //printf("level %d", buddy->level);
   // sanity check;
   assert(buddy->start==p);
   BuddyAllocator_releaseBuddy(alloc, buddy);

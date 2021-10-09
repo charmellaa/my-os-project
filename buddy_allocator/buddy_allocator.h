@@ -34,7 +34,7 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level);
 void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc);
 
 //allocates memory
-void BuddyAllocator_malloc(BuddyAllocator* alloc, int size);
+void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size);
 
 //releases allocated memory
 void BuddyAllocator_free(BuddyAllocator* alloc, void* mem);
