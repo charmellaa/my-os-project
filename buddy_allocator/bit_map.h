@@ -23,6 +23,13 @@ int BitMap_bit(const BitMap* bit_map, int bit_num);
 
 //helpers for bitmap implementation
 
+//checks all children of idx and returns 1 if they're all free
+//otherwise it returns 0
+int BitMap_checkChildren(BitMap* bit_map, int idx);
+
+//sets bit to 1 and if buddy is also 1, sets parents' bit to 1
+void setBitOne(BitMap* bit_map, int idx);
+
 //returns which level node idx is in
 int levelIdx(int idx);
 
@@ -34,5 +41,4 @@ int parentIdx(int idx);
 
 //returns the offset of node idx in his level
 int startIdx(int idx);
-
 

@@ -27,7 +27,7 @@ void BuddyAllocator_init(BuddyAllocator* alloc, //the allocator
   assert (buffer_size>=BuddyAllocator_calcSize(num_levels));
 
 
-  printf("BUDDY INITIALIZING\n");
+  printf("BUDDY INITIALIZING at address %p\n", memory);
   printf("\tlevels: %d", num_levels);
   printf("\tbucket size:%d\n", min_bucket_size);
   printf("\tmanaged memory %d bytes\n", (1<<num_levels)*min_bucket_size);
@@ -51,8 +51,8 @@ void BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   int new_size = size + 4; //adding 4 bytes to store the index
   int memory_size = (1<<alloc->num_levels)*alloc->min_bucket_size; 
   //checking if size requested is bigger than memory available
-if (new_size > memory_size) {
-	printf("Not enough memory! Failed allocating..\n");
+  if (new_size > memory_size) {
+	printf("Not enough memory! Allocating failed.\n");
 	return; 
 	}
   //if everything's ok, i start at the first level
@@ -69,8 +69,8 @@ if (new_size > memory_size) {
   
   printf("Level chosen: %d\n", level);
   //now look for a free spot on the given level
-  BuddyAllocator_getBuddy(alloc, level);
-if (!spot) { //no free spots found 
+  int spot = BuddyAllocator_getBuddy(alloc, level);
+  if (!spot) { //no free spots found 
 	return;
   }
 
@@ -79,14 +79,56 @@ if (!spot) { //no free spots found
 int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
   //Checking level size
   int lsize = (1<<(alloc->num_levels-level))*alloc->min_bucket_size;
-  printf("Level: %d\t Size: %d\n", level, lsize);
-  //now I have to scan this level to see if i find a free spot
-  //once I find one, I have to check that all of its parents are free
-  //and all of its children are free
-  //finally I allocate
+  printf("Block size: %d\n", lsize);
 
-//------ TBC-----
+  //first index of this level
+  int firstIdx = 1<<level;
+  //and the last one
+  int lastIdx = (1<<(level+1))-1;
+
+  //now I have to scan this level to see if i find a free spot
+  int scan = firstIdx;
+  while(scan <= lastIdx) {
+	int count = 0;
+	int next;
+	int parent;
+	if (!BitMap_bit(&alloc->bitmap_tree,scan)) { //current bit is 0 (free spot)
+	//I have to check that its parents are free
+		parent = parentIdx(scan);
+		while (parent>0) {
+			if (BitMap_bit(&alloc->bitmap_tree,parent)) { //bit = 1
+				//printf("Index %d is occupied\n", parent);
+				count++; 
+				parent = parentIdx(parent); } //check parents above
+			else {
+				next = buddyIdx(parent*2); //move to the next subtree
+				break;
+				}
+			}  
+		//if parents are free, i check children
+		if (count==0 && BitMap_checkChildren(&alloc->bitmap_tree, scan)) { 
+		//we allocate and we set its bit to 1
+		//if its sibling is also occupied, we set the parents' bit to 1
+			setBitOne(&alloc->bitmap_tree,scan);
+			printf("SUCCESS: Requested allocation at index: %d\n", scan);
+			return scan;
+			}
+		else {
+			if (count!=0 && parent != 0) { 
+			//i move to the next subtree of the first parent with bit 0 that i found
+				scan = next*(1<<count);
+			}
+			else {
+				scan++; //children aren't free, scan next node
+			} } }
+	else {
+			scan++; //node not available, scan next node
+		}
   }
+  printf("FAILED: No blocks available.\n");
+  return 0;
+
+}
   
 	
 
@@ -95,30 +137,6 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc){
 //To do..
 
-}
-
-//allocates memory
-void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
-  // we determine the level of the page
-  int mem_size=(1<<alloc->num_levels)*alloc->min_bucket_size;
-  int  level=floor(log2(mem_size/(size+8)));
-
-  // if the level is too small, we pad it to max
-  if (level>alloc->num_levels)
-    level=alloc->num_levels;
-
-  printf("requested: %d bytes, level %d \n",
-         size, level);
-
-  // we get a buddy of that size;
-  BuddyListItem* buddy=BuddyAllocator_getBuddy(alloc, level);
-  if (! buddy)
-    return 0;
-
-  // we write in the memory region managed the buddy address
-  BuddyListItem** target= (BuddyListItem**)(buddy->start);
-  *target=buddy;
-  return buddy->start+8;
 }
 //releases allocated memory
 void BuddyAllocator_free(BuddyAllocator* alloc, void* mem) {
