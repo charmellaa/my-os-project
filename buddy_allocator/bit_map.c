@@ -63,25 +63,6 @@ int BitMap_bit(const BitMap* bit_map, int bit_num){
   return (bit_map->buffer[byte_num] & (1<<bit_in_byte))!=0;
 }
 
-//set bit to 1 and if buddy is also 1, set parents' bit to 1
-void setBitOne(BitMap* bit_map, int idx) {
-	BitMap_setBit(bit_map, idx, 1);
-	int parent = idx;
-	while (parent>1) { //until i reach index 1
-		//buddy is also occupied
-		if (BitMap_bit(bit_map, buddyIdx(parent))) {
-			//i set the parent to 1
-			BitMap_setBit(bit_map, parent/2, 1); 
-		}
-		else {
-			return;
-		}
-		parent=parent/2;
-	}
-	return;
-}
-
-
 //checks all children of idx and returns 1 if they're all free
 //otherwise it returns 0
 int BitMap_checkChildren(BitMap* bit_map, int idx) {
@@ -102,4 +83,27 @@ int BitMap_checkChildren(BitMap* bit_map, int idx) {
 	}
 	//all children are free
 	return 1;
+}
+
+//prints current state of bitmap //0 if at least one of children is 0; 1 if occupied
+void BitMap_print(BitMap* bitmap) {
+	int num_bits = bitmap->num_bits;
+	int i, j;
+	for (i = 1; i<num_bits; i++) {
+		if (i==1<<levelIdx(i)) {
+			printf("LEVEL %d: ", levelIdx(i));
+		        for (j = 1; j<num_bits/(1<<(levelIdx(i)+1)); j++) {
+				printf(" "); }
+			}
+		if ( i==(1<<(levelIdx(i)+1))-1) {
+			printf("%d", BitMap_bit(bitmap, i));
+			printf("\n"); }
+		else {
+			printf("%d", BitMap_bit(bitmap, i));
+			for (j=1; j<num_bits/(1<<(levelIdx(i))); j++) {
+				printf(" "); }
+			}
+	}
+	printf("\n");
+
 }

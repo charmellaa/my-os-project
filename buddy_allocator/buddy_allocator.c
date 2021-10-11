@@ -11,12 +11,12 @@ int BuddyAllocator_calcSize(int num_levels) {
 }
 
 
-void BuddyAllocator_init(BuddyAllocator* alloc, //the allocator
-                         int num_levels, //number of levels of the b-tree
-                         uint8_t* buffer, //the bitmap
-                         int buffer_size, //bitmap's size in bytes
+void BuddyAllocator_init(BuddyAllocator* alloc,
+                         int num_levels,
+                         uint8_t* buffer,
+                         int buffer_size,
                          char* memory,
-                         int min_bucket_size) { //size of each blocks 
+                         int min_bucket_size) { 
 
   // we need room also for level 0
   alloc->num_levels=num_levels;
@@ -89,7 +89,7 @@ void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   //just checking
   //printf("index allocated %d\n", *((int*)address));
 
-
+   BitMap_print(&alloc->bitmap_tree);
   //we return the address + sizeof(int);
   return (void*) (address+4);
 
@@ -112,11 +112,13 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 		parent = parentIdx(scan);
 		while (parent>0) {
 			if (BitMap_bit(&alloc->bitmap_tree,parent)) { //bit = 1
-				//printf("Index %d is occupied\n", parent);
+				printf("Index %d is occupied\n", parent);
 				count++; 
 				parent = parentIdx(parent); } //check parents above
 			else {
-				next = buddyIdx(parent*2); //move to the next subtree
+				//next = buddyIdx(parent*2); ----> it generates me an endless loop :(
+
+				//i found the first parent with bit 0; i can now exit the loop			
 				break;
 				}
 			}  
@@ -124,20 +126,44 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 		if (count==0 && BitMap_checkChildren(&alloc->bitmap_tree, scan)) { 
 		//we allocate and we set its bit to 1
 		//if its sibling is also occupied, we set the parents' bit to 1
-			setBitOne(&alloc->bitmap_tree,scan);
+			BitMap_setBit(&alloc->bitmap_tree, scan, 1);
+			int p = scan;
+			while (p>1) { //until i reach index 1
+				if (BitMap_bit(&alloc->bitmap_tree, buddyIdx(p))) {
+					BitMap_setBit(&alloc->bitmap_tree, parentIdx(p), 1); 
+				}
+				else { break; }
+				p=parentIdx(p);
+				}
 			printf("SUCCESS: Requested allocation at index: %d\n", scan);
 			return scan;
 			}
 		else {
-			if (count!=0 && parent != 0) { 
+			if (count!=0) { 
 			//i move to the next subtree of the first parent with bit 0 that i found
-				scan = next*(1<<count);
+
+				//scan = next*(1<<count) --> it generates me an endless loop :(
+
+				//this calculates the next index to be scanned in the right way:
+
+				//'subtrees' is how many subtrees the first free parent i found earlier has
+				int subtrees = 1<<count;
+				//i store in the variable 'next' the subtree in which i currently am (starting from 0)
+				//to do this i just have to divide the current offset by the number of subtrees
+				next = startIdx(scan)/subtrees;
+				//with all the info above, i can now move to the next index
+				scan = firstIdx+((next+1)*(subtrees));
+				//checking: if new 'scan' is greater than lastIdx, 
+				//i should be exiting this huge while loop			
+				printf("Next index to be checked is: %d \n", scan);
 			}
 			else {
-				scan++; //children aren't free, scan next node
-			} } }
+				scan++; //children not free, move to next node
+			} 
+		} 
+	}
 	else {
-			scan++; //node not available, scan next node
+		scan++; //node not available, scan next node
 		}
   }
   printf("FAILED: No blocks available.\n");

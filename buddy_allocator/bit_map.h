@@ -27,9 +27,6 @@ int BitMap_bit(const BitMap* bit_map, int bit_num);
 //otherwise it returns 0
 int BitMap_checkChildren(BitMap* bit_map, int idx);
 
-//sets bit to 1 and if buddy is also 1, sets parents' bit to 1
-void setBitOne(BitMap* bit_map, int idx);
-
 //returns which level node idx is in
 int levelIdx(int idx);
 
@@ -42,3 +39,5 @@ int parentIdx(int idx);
 //returns the offset of node idx in his level
 int startIdx(int idx);
 
+//prints current state of bitmap: 0 if at least one of children is 0, 1 if occupied
+void BitMap_print(BitMap* bitmap);
