@@ -175,20 +175,34 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 
 /*
 
-void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc){
+void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc, int index) {
 //To do..
 
-}
+}*/
+
+
 //releases allocated memory
 void BuddyAllocator_free(BuddyAllocator* alloc, void* mem) {
-  printf("freeing %p", mem);
-  // we retrieve the buddy from the system
-  char* p=(char*) mem;
-  p=p-8;
-  // sanity check;
-  assert(buddy->start==p);
-  BuddyAllocator_releaseBuddy(alloc, buddy);
-  
-}*/ 
+	
+	//check if mem is a valid address
+	if (!mem) {
+		printf("Address not valid.\n");
+		return;
+	printf("mem is %p\n", mem);	
+	char* original_address = (char*) mem;
+	//I retrieve the original address by subtracting 4 bytes
+	original_address=original_address-4;
+	printf("address of buddy is %p\n", original_address);
+	//and the index of buddy that needs to be freed
+ 	int index =  *((int*) original_address);
+	//check if it's a valid index
+	assert(index<(1<<((alloc->num_levels)+1)));
+
+	printf("Buddy to be freed: %p, with index: %d\n", mem, index);
+
+        //BuddyAllocator_releaseBuddy(BuddyAllocator* alloc, int index);
+
+	 
+} 
 
 

@@ -69,6 +69,8 @@ int main(int argc, char** argv) {
   void* q = BuddyAllocator_malloc(&alloc, 10);
   printf("Address allocated: %p\n", q);
   printf("\n------\n");
+  BuddyAllocator_free(&alloc, q);
+  printf("\n------\n");
 
   void* s = BuddyAllocator_malloc(&alloc, 50);
   printf("Address allocated: %p\n", s);
@@ -76,6 +78,8 @@ int main(int argc, char** argv) {
 
   void* t = BuddyAllocator_malloc(&alloc, 100);
   printf("Address allocated: %p\n", t);
+  printf("\n------\n");
+  BuddyAllocator_free(&alloc, t);
   printf("\n------\n");
 
 }
