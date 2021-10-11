@@ -116,7 +116,7 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 				count++; 
 				parent = parentIdx(parent); } //check parents above
 			else {
-				//next = buddyIdx(parent*2); ----> it generates me an endless loop :(
+				//next = buddyIdx(parent*2); ----> it generates an endless loop :(
 
 				//i found the first parent with bit 0; i can now exit the loop			
 				break;
@@ -142,17 +142,21 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 			if (count!=0) { 
 			//i move to the next subtree of the first parent with bit 0 that i found
 
-				//scan = next*(1<<count) --> it generates me an endless loop :(
+				//scan = next*(1<<count) --> it generates an endless loop :(
 
 				//this calculates the next index to be scanned in the right way:
 
-				//'subtrees' is how many subtrees the first free parent i found earlier has
-				int subtrees = 1<<count;
-				//i store in the variable 'next' the subtree in which i currently am (starting from 0)
-				//to do this i just have to divide the current offset by the number of subtrees
-				next = startIdx(scan)/subtrees;
+				//'children_blocks' is how many blocks of children (2siblings)
+				// the first free parent i found earlier has;
+				//relatively to the current level i am in
+				int children_blocks = 1<<count;
+				//i store in the variable 'next' the subtree in  which my block is 
+				//on this level starting from 0, relatively to the free parent
+				//to do this i just have to divide the current offset by the number of 
+				//children blocks
+				next = startIdx(scan)/children_blocks;
 				//with all the info above, i can now move to the next index
-				scan = firstIdx+((next+1)*(subtrees));
+				scan = firstIdx+((next+1)*(children_blocks));
 				//checking: if new 'scan' is greater than lastIdx, 
 				//i should be exiting this huge while loop			
 				printf("Next index to be checked is: %d \n", scan);
@@ -187,7 +191,8 @@ void BuddyAllocator_free(BuddyAllocator* alloc, void* mem) {
 	//check if mem is a valid address
 	if (!mem) {
 		printf("Address not valid.\n");
-		return;
+		return; 
+		}
 	printf("mem is %p\n", mem);	
 	char* original_address = (char*) mem;
 	//I retrieve the original address by subtracting 4 bytes
