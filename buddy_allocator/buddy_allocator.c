@@ -157,9 +157,10 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 				next = startIdx(scan)/children_blocks;
 				//with all the info above, i can now move to the next index
 				scan = firstIdx+((next+1)*(children_blocks));
+				
 				//checking: if new 'scan' is greater than lastIdx, 
 				//i should be exiting this huge while loop			
-				printf("Next index to be checked is: %d \n", scan);
+				//printf("Next index to be checked is: %d \n", scan);
 			}
 			else {
 				scan++; //children not free, move to next node
@@ -177,12 +178,32 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
   
 	
 
-/*
+
 
 void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc, int index) {
-//To do..
+	
+	//check if the given address has bit = 0
+	//either it's a free block or only its parent is occupied
+	//if it is, something definitely went wrong
+        if (!BitMap_bit(&alloc->bitmap_tree, index)) {
+		printf("ERROR: You're trying to free a block that has bit 0 in the bitmap...\n");
+	}
 
-}*/
+	//we can set the bit to 0
+	BitMap_setBit(&alloc->bitmap_tree, index, 0);
+
+	//then we set the parent and grandparents' bit to 0
+	//(because parent is 0 if at least 1 of its children is 0)
+	int p = index;
+	while (p>1) { //until i reach root node
+		BitMap_setBit(&alloc->bitmap_tree, parentIdx(p), 0); 
+		p=parentIdx(p);
+	}
+
+	printf("SUCCESS: You have now freed the block at index %d.\n", index);
+	return;
+
+}
 
 
 //releases allocated memory
@@ -205,7 +226,7 @@ void BuddyAllocator_free(BuddyAllocator* alloc, void* mem) {
 
 	printf("Buddy to be freed: %p, with index: %d\n", mem, index);
 
-        //BuddyAllocator_releaseBuddy(BuddyAllocator* alloc, int index);
+        BuddyAllocator_releaseBuddy(alloc, index);
 
 	 
 } 
