@@ -89,7 +89,7 @@ void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   //just checking
   //printf("index allocated %d\n", *((int*)address));
 
-   BitMap_print(&alloc->bitmap_tree);
+   //BitMap_print(&alloc->bitmap_tree);
   //we return the address + sizeof(int);
   return (void*) (address+4);
 
@@ -112,7 +112,7 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 		parent = parentIdx(scan);
 		while (parent>0) {
 			if (BitMap_bit(&alloc->bitmap_tree,parent)) { //bit = 1
-				printf("Index %d is occupied\n", parent);
+				//printf("Index %d is occupied\n", parent);
 				count++; 
 				parent = parentIdx(parent); } //check parents above
 			else {
@@ -146,17 +146,17 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 
 				//This calculates the next index to be scanned in the right way:
 
-				//'children_blocks' is how many blocks of children (2siblings)
-				// the first free parent i found earlier has
-				//relatively to the current level i am in
-				int children_blocks = 1<<count;
-
+				//'children_blocks' is how many blocks of children (or grandchildren)
+				// the first free parent i found earlier has on the current level i am in
+				//with 'subtree_blocks' blocks in each of its two subtrees
+				int children_blocks = 1<<(count+1);
+				int subtree_blocks = children_blocks/2;
 				//i store in the variable 'next' the free parents' subtree in which my current node is,starting from 0
-				//to do this i just have to divide the current offset by the number of children blocks
-				next = startIdx(scan)/children_blocks; //since i have a binary tree, it can only be 0 or 1
+				//to do this i just have to divide the current offset by subtree_blocks
+				next = startIdx(scan)/subtree_blocks; //since i have a binary tree, it can only be 0 or 1
 
 				//calculate the new offset so i can move to next subtree
-				int new_offset = (next+1)*children_blocks;
+				int new_offset = (next+1)*subtree_blocks;
 
 				//now, i can calculate the new index
 				scan = firstIdx+new_offset;
@@ -190,16 +190,23 @@ void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc, int index) {
 	//if it is, something definitely went wrong
         if (!BitMap_bit(&alloc->bitmap_tree, index)) {
 		printf("ERROR: You're trying to free a block that has bit 0 in the bitmap...\n");
+		return;
+	}
+
+	//check if children are free
+	if (!BitMap_checkChildren(&alloc->bitmap_tree,index)) {
+		printf("ERROR: You can't free this block: occupied child found..\n");
+		return;
 	}
 
 	//we can set the bit to 0
 	BitMap_setBit(&alloc->bitmap_tree, index, 0);
 
 	//then we set the parent and grandparents' bit to 0
-	//(because parent is 0 if at least 1 of its children is 0)
-	int p = index;
-	while (p>1) { //until i reach root node
-		BitMap_setBit(&alloc->bitmap_tree, parentIdx(p), 0); 
+	int p = parentIdx(index);
+	while (p>=1) { //until i reach root node
+		if (!BitMap_bit(&alloc->bitmap_tree, p)) {break;} //found a free parent->done
+		BitMap_setBit(&alloc->bitmap_tree, p, 0); 
 		p=parentIdx(p);
 	}
 

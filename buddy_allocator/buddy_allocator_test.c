@@ -25,28 +25,13 @@ int main(int argc, char** argv) {
                       MIN_BUCKET_SIZE);
   printf("DONE\n");
 
-  printf("First try: allocating 100000\n");
-  void* p1 = BuddyAllocator_malloc(&alloc, 100000);
-  printf("Address allocated: %p\n", p1);
-  printf("Second try: allocating 512\n");
-  void* p2 = BuddyAllocator_malloc(&alloc, 512);
-  printf("Address allocated: %p\n", p2);
-  printf("Third try: allocating 100\n");
-  void* p3 = BuddyAllocator_malloc(&alloc, 100);
-  printf("Address allocated: %p\n", p3);
-  printf("Fourth try: allocating 1048756\n");
-  void* p4 = BuddyAllocator_malloc(&alloc, 1048756);
-  printf("Address allocated: %p\n", p4);
-  printf("Last try: allocating 1000000\n");
-  void *p5 = BuddyAllocator_malloc(&alloc, 1000000);
-  printf("Address allocated: %p\n", p5);
-  printf("DONE\n");
-/*
   void* p1=BuddyAllocator_malloc(&alloc, 100);
   void* p2=BuddyAllocator_malloc(&alloc, 100);
   void* p3=BuddyAllocator_malloc(&alloc, 100000);
   BuddyAllocator_free(&alloc, p1);
   BuddyAllocator_free(&alloc, p2);
-  BuddyAllocator_free(&alloc, p3);*/
-  
+  BuddyAllocator_free(&alloc, p3);
+  void* p5=BuddyAllocator_malloc(&alloc, 100000000);
+  printf("%p\n",p5);
+ 
 }
