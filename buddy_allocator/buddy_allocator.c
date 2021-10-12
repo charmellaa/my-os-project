@@ -144,19 +144,22 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 
 				//scan = next*(1<<count) --> it generates an endless loop :(
 
-				//this calculates the next index to be scanned in the right way:
+				//This calculates the next index to be scanned in the right way:
 
 				//'children_blocks' is how many blocks of children (2siblings)
-				// the first free parent i found earlier has;
+				// the first free parent i found earlier has
 				//relatively to the current level i am in
 				int children_blocks = 1<<count;
-				//i store in the variable 'next' the subtree in  which my block is 
-				//on this level starting from 0, relatively to the free parent
-				//to do this i just have to divide the current offset by the number of 
-				//children blocks
-				next = startIdx(scan)/children_blocks;
-				//with all the info above, i can now move to the next index
-				scan = firstIdx+((next+1)*(children_blocks));
+
+				//i store in the variable 'next' the free parents' subtree in which my current node is,starting from 0
+				//to do this i just have to divide the current offset by the number of children blocks
+				next = startIdx(scan)/children_blocks; //since i have a binary tree, it can only be 0 or 1
+
+				//calculate the new offset so i can move to next subtree
+				int new_offset = (next+1)*children_blocks;
+
+				//now, i can calculate the new index
+				scan = firstIdx+new_offset;
 				
 				//checking: if new 'scan' is greater than lastIdx, 
 				//i should be exiting this huge while loop			

@@ -86,4 +86,11 @@ int main(int argc, char** argv) {
   printf("Address allocated: %p\n", u);
   printf("\n------\n");
 
+  BuddyAllocator_free(&alloc, p2);
+  printf("\n------\n");
+
+  BuddyAllocator* a = &alloc;
+
+  BitMap_print(&a->bitmap_tree);
+
 }
