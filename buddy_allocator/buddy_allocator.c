@@ -6,7 +6,7 @@
 
 // computes the size in bytes for the allocator
 int BuddyAllocator_calcSize(int num_levels) {
-  int num_bits=1<<(num_levels+1); // maximum number of allocations, used to determine the max list items; 2^(num_levels+1)
+  int num_bits=1<<(num_levels+1); // maximum number of allocations = maximum number of bits
   return BitMap_getBytes(num_bits);
 }
 
@@ -28,9 +28,9 @@ void BuddyAllocator_init(BuddyAllocator* alloc,
 
 
   printf("BUDDY INITIALIZING at address %p\n", memory);
-  printf("\tlevels: %d", num_levels);
-  printf("\tbucket size:%d\n", min_bucket_size);
-  printf("\tmanaged memory %d bytes\n", (1<<num_levels)*min_bucket_size);
+  printf("\tlevels: %d\n", num_levels);
+  printf("\tbucket size: %d bytes\n", min_bucket_size);
+  printf("\tmanaged memory: %d bytes\n", (1<<num_levels)*min_bucket_size);
 
   int bits_num = 1<<(num_levels+1);
   int bitmap_bytes = BitMap_getBytes(bits_num);
@@ -70,7 +70,7 @@ void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   printf("Level chosen: %d\n", level);
   //Checking block size on this level
   int block_size = (1<<(alloc->num_levels-level))*alloc->min_bucket_size;
-  printf("Block size: %d\n", block_size);
+  printf("\tBlock size: %d\n", block_size);
   
   //now look for a free spot on the given level
   int spot = BuddyAllocator_getBuddy(alloc, level);
@@ -81,7 +81,7 @@ void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   //address of block chosen 
   int offset = startIdx(spot);
   char* address = alloc->memory + (offset*block_size);
-  printf("Original given address is %p\n", address);
+  //printf("Original given address is %p\n", address);
  
   //write the index on the first 4 bytes of the block chosen
   *((int*) address) = spot;
@@ -111,21 +111,20 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 	//I have to check that its parents are free
 		parent = parentIdx(scan);
 		while (parent>0) {
-			if (BitMap_bit(&alloc->bitmap_tree,parent)) { //bit = 1
+			if (BitMap_bit(&alloc->bitmap_tree,parent)) {
 				//printf("Index %d is occupied\n", parent);
 				count++; 
 				parent = parentIdx(parent); } //check parents above
 			else {
 				//next = buddyIdx(parent*2); ----> it generates an endless loop :(
-
-				//i found the first parent with bit 0; i can now exit the loop			
-				break;
+				break; //i found the first parent with bit 0; i can now exit the loop			
 				}
 			}  
-		//if parents are free, i check children
+		//check children
+		//if parents & children are free
 		if (count==0 && BitMap_checkChildren(&alloc->bitmap_tree, scan)) { 
-		//we allocate and we set its bit to 1
-		//if its sibling is also occupied, we set the parents' bit to 1
+		// set its bit to 1
+		// if its sibling is also occupied, we set the parents' bit to 1
 			BitMap_setBit(&alloc->bitmap_tree, scan, 1);
 			int p = scan;
 			while (p>1) { //until i reach index 1
@@ -139,7 +138,7 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 			return scan;
 			}
 		else {
-			if (count!=0) { 
+			if (count!=0) { // parents not free
 			//i move to the next subtree of the first parent with bit 0 that i found
 
 				//scan = next*(1<<count) --> it generates an endless loop :(
@@ -151,9 +150,10 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 				//with 'subtree_blocks' blocks in each of its two subtrees
 				int children_blocks = 1<<(count+1);
 				int subtree_blocks = children_blocks/2;
+
 				//i store in the variable 'next' the free parents' subtree in which my current node is,starting from 0
 				//to do this i just have to divide the current offset by subtree_blocks
-				next = startIdx(scan)/subtree_blocks; //since i have a binary tree, it can only be 0 or 1
+				next = startIdx(scan)/subtree_blocks; // it can only be 0 or 1
 
 				//calculate the new offset so i can move to next subtree
 				int new_offset = (next+1)*subtree_blocks;
@@ -166,7 +166,7 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 				//printf("Next index to be checked is: %d \n", scan);
 			}
 			else {
-				scan++; //children not free, move to next node
+				scan++; //children not free, scan next node
 			} 
 		} 
 	}
@@ -224,17 +224,17 @@ void BuddyAllocator_free(BuddyAllocator* alloc, void* mem) {
 		printf("Address not valid.\n");
 		return; 
 		}
-	printf("mem is %p\n", mem);	
+	//printf("mem is %p\n", mem);
+	
 	char* original_address = (char*) mem;
 	//I retrieve the original address by subtracting 4 bytes
 	original_address=original_address-4;
-	printf("address of buddy is %p\n", original_address);
 	//and the index of buddy that needs to be freed
  	int index =  *((int*) original_address);
 	//check if it's a valid index
 	assert(index<(1<<((alloc->num_levels)+1)));
 
-	printf("Buddy to be freed: %p, with index: %d\n", mem, index);
+	printf("Buddy to be freed: address: %p, with index: %d\n", mem, index);
 
         BuddyAllocator_releaseBuddy(alloc, index);
 
