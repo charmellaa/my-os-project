@@ -11,9 +11,7 @@ char memory[MEMORY_SIZE];
 
 BuddyAllocator alloc;
 int main(int argc, char** argv) {
-  printf("init... ");
-  int req_size=BuddyAllocator_calcSize(BUDDY_LEVELS);
-  printf("size requested for initialization: %d/BUFFER_SIZE\n", req_size);
+  printf("Initializing...\n ");
   BuddyAllocator_init(&alloc, BUDDY_LEVELS,
                       buffer,
                       BUFFER_SIZE,

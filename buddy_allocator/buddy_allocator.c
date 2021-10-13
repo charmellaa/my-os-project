@@ -91,6 +91,7 @@ void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
 
    //BitMap_print(&alloc->bitmap_tree);
   //we return the address + sizeof(int);
+  printf("\t Address of newly allocated block: %p\n", address+4);
   return (void*) (address+4);
 
 }
