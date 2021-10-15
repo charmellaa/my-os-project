@@ -47,7 +47,7 @@ void BitMap_setBit(BitMap* bit_map, int bit_num, int status){
   // get byte
   int byte_num=bit_num>>3;
   assert(byte_num<bit_map->buffer_size);
-  int bit_in_byte =bit_num & 0x07;
+  int bit_in_byte =7-(bit_num & 0x07);
   if (status) {
     bit_map->buffer[byte_num] |= (1<<bit_in_byte);
   } else {
@@ -59,7 +59,7 @@ void BitMap_setBit(BitMap* bit_map, int bit_num, int status){
 int BitMap_bit(const BitMap* bit_map, int bit_num){
   int byte_num=bit_num>>3; 
   assert(byte_num<bit_map->buffer_size);
-  int bit_in_byte =bit_num & 0x07;
+  int bit_in_byte =7-(bit_num & 0x07);
   return (bit_map->buffer[byte_num] & (1<<bit_in_byte))!=0;
 }
 
@@ -89,7 +89,9 @@ int BitMap_checkChildren(BitMap* bit_map, int idx) {
 void BitMap_print(BitMap* bitmap) {
 	int num_bits = bitmap->num_bits;
 	int i, j;
-	for (i = 1; i<num_bits; i++) {
+	for (i = 0; i<num_bits; i++) {
+		if (i==0) {printf("\n");}
+		else {
 		if (i==1<<levelIdx(i)) {
 			printf("LEVEL %d: ", levelIdx(i));
 		        for (j = 1; j<num_bits/(1<<(levelIdx(i)+1)); j++) {
@@ -102,7 +104,7 @@ void BitMap_print(BitMap* bitmap) {
 			printf("%d", BitMap_bit(bitmap, i));
 			for (j=1; j<num_bits/(1<<(levelIdx(i))); j++) {
 				printf(" "); }
-			}
+			}}
 	}
 	printf("\n");
 

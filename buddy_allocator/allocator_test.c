@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #define BUFFER_SIZE 512
-#define BUDDY_LEVELS 5
+#define BUDDY_LEVELS 3
 #define MEMORY_SIZE 512
 #define MIN_BUCKET_SIZE (BUFFER_SIZE>>(BUDDY_LEVELS))
 
@@ -18,77 +18,44 @@ int main(int argc, char** argv) {
                       memory,
                       MIN_BUCKET_SIZE);
   printf("DONE\n");
+  BuddyAllocator* a = &alloc;
   void* p1 = BuddyAllocator_malloc(&alloc, 509);
   printf("Address allocated: %p\n", p1);
   //just checking
   //printf("index allocated %d\n", *(int*)((char*)p1 - 4));
+  BitMap_print(&a->bitmap_tree);
   printf("\n------\n");
+  
 
-  void* p2 = BuddyAllocator_malloc(&alloc, 10);
+  void* p2 = BuddyAllocator_malloc(&alloc, 50);
   printf("Address allocated: %p\n", p2);
   //printf("index allocated %d\n", *(int*)((char*)p2 - 4));
-  printf("\n------\n");
-
-  void* p3 = BuddyAllocator_malloc(&alloc,10);
-  printf("Address allocated: %p\n", p3);
-  printf("\n------\n");
-
-  void* p4 = BuddyAllocator_malloc(&alloc,10);
-  printf("Address allocated: %p\n", p4);
-  printf("\n------\n");
-
-  void* p5 = BuddyAllocator_malloc(&alloc, 22);
-  printf("Address allocated: %p\n", p5);
-  printf("\n------\n");
- 
-  void* p6 = BuddyAllocator_malloc(&alloc, 10);
-  printf("Address allocated: %p\n", p6);
-  printf("\n------\n");
-
-  void* p7 = BuddyAllocator_malloc(&alloc, 10);
-  printf("Address allocated: %p\n", p7);
-  printf("\n------\n");
- 
-  void* p = BuddyAllocator_malloc(&alloc, 10);
-  printf("Address allocated: %p\n", p);
-  printf("\n------\n");
-  void* p8 = BuddyAllocator_malloc(&alloc, 22);
-  printf("Address allocated: %p\n", p8);
-  printf("\n------\n");
-
-  void* p9 = BuddyAllocator_malloc(&alloc, 12);
-  printf("Address allocated: %p\n", p9);
-  printf("\n------\n");
-
-  void* r = BuddyAllocator_malloc(&alloc, 200);
-  printf("Address allocated: %p\n", r);
-  printf("\n------\n");
-
-  void* q = BuddyAllocator_malloc(&alloc, 10);
-  printf("Address allocated: %p\n", q);
-  printf("\n------\n");
-  BuddyAllocator_free(&alloc, q);
-  printf("\n------\n");
-
-  void* s = BuddyAllocator_malloc(&alloc, 50);
-  printf("Address allocated: %p\n", s);
-  printf("\n------\n");
-
-  void* t = BuddyAllocator_malloc(&alloc, 100);
-  printf("Address allocated: %p\n", t);
-  printf("\n------\n");
-  BuddyAllocator_free(&alloc, t);
-  printf("\n------\n");
-
-  void* u = BuddyAllocator_malloc(&alloc, 11);
-  printf("Address allocated: %p\n", u);
-  printf("\n------\n");
-
-  BuddyAllocator_free(&alloc, p2);
-  printf("\n------\n");
-
-  BuddyAllocator* a = &alloc;
-
   BitMap_print(&a->bitmap_tree);
+  printf("\n------\n");
+
+  void* p3 = BuddyAllocator_malloc(&alloc,200);
+  printf("Address allocated: %p\n", p3);
+  BitMap_print(&a->bitmap_tree);
+  printf("\n------\n");
+
+  void* p4 = BuddyAllocator_malloc(&alloc,32);
+  printf("Address allocated: %p\n", p4);
+  BitMap_print(&a->bitmap_tree);
+  printf("\n------\n");
+
+  void* p5 = BuddyAllocator_malloc(&alloc, 88);
+  printf("Address allocated: %p\n", p5);
+  BitMap_print(&a->bitmap_tree);
+  printf("\n------\n");
+ 
+
+  BuddyAllocator_free(&alloc, p3);
+  BitMap_print(&a->bitmap_tree);
+  printf("\n------\n");
+  BuddyAllocator_free(&alloc, p5);
+  BitMap_print(&a->bitmap_tree);
+  printf("\n------\n");
+
+ 
 
 }

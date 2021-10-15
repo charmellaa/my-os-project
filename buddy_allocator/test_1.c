@@ -54,6 +54,6 @@ int main(int argc, char** argv) {
   printf("---------------\n");
   BuddyAllocator_free(&alloc, p2);
   printf("---------------\n");
-  printf("SUCCESS!\n");
+  printf("test: SUCCESS!\n");
 
 }
