@@ -139,17 +139,17 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 			if (count!=0) { // parents not free
 			//i move to the next block under the first parent with bit 0 that i found
 
-				//scan = next*(1<<count) --> it generates an endless loop :(
-				//This calculates the next index to be scanned in the right way, by moving to the free block:
+				//Next index to be scanned will be under that block
 
 				//'children_blocks' is how many blocks of children (or grandchildren)
 				// the first free parent i found earlier has on the current level i am in
-				//with 'subtree_blocks' blocks in each of its two subtrees
+				//with 'subtree_blocks' the number of blocks in each of its two subtrees
 				int children_blocks = 1<<(count+1);
-	                        int subtree_blocks = children_blocks/2;
+				int subtree_blocks = children_blocks/2;
 
 
-				//i store in the variable 'next' the free parents' subtree in which my current index is,starting from 0
+				//i store in the variable 'next' the free parents' subtree 
+				//in which my current index is,starting from 0
 				//to do this i just have to divide the current offset by subtree_blocks
 				next = startIdx(scan)/subtree_blocks; // it can only be 0 or 1
 
