@@ -42,6 +42,3 @@ int startIdx(int idx);
 //prints current state of bitmap: 0 if at least one of children is 0, 1 if occupied
 void BitMap_print(BitMap* bitmap);
 
-void BitMap_print2(BitMap* bitmap);
-
-void BitMap_print3(BitMap* bitmap);

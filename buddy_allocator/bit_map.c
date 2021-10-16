@@ -109,18 +109,3 @@ void BitMap_print(BitMap* bitmap) {
 	printf("\n");
 
 }
-
-void BitMap_print2(BitMap* bitmap) {
-	for (int i=0; i<bitmap->num_bits; i++) {
-		printf("%d", BitMap_bit(bitmap, i));
-	}
-	printf("\n");
-}
-
-void BitMap_print3(BitMap* bitmap) {
-	uint8_t *buffer = bitmap->buffer;
-	for(int i = 0; i<bitmap->buffer_size; i++) {
-		printf("%d %d\n", i, buffer[i]);
-	}
-}
-	

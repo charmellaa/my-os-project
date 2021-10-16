@@ -52,7 +52,7 @@ void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   int memory_size = (1<<alloc->num_levels)*alloc->min_bucket_size; 
   //checking if size requested is bigger than memory available
   if (new_size > memory_size) {
-	printf("Not enough memory! Allocation failed.\n");
+	printf("FAILED: Not enough memory!\n");
 	return NULL; 
 	}
   //if everything's ok, i start at the first level
@@ -111,12 +111,12 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 	if (!BitMap_bit(&alloc->bitmap_tree,scan)) { //current bit is 0 (free spot)
 	//I have to check that its parents are free
 		parent = parentIdx(scan);
-		while (parent>0) {
+		while (parent>0) { //until i reach root node
 			if (BitMap_bit(&alloc->bitmap_tree,parent)) {
-				//printf("Index %d is occupied\n", parent);
+				//found occupied parent
 				count++; 
 				parent = parentIdx(parent); } //check parents above
-			else { parent = parentIdx(parent); }
+			else { parent = parentIdx(parent); } //keep checking
 			}  
 		//check children
 		//if parents & children are free
@@ -137,24 +137,23 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 			}
 		else {
 			if (count!=0) { // parents not free
-			//i move to the next subtree of the first parent with bit 0 that i found
+			//i move to the next block under the first parent with bit 0 that i found
 
 				//scan = next*(1<<count) --> it generates an endless loop :(
-
-				//This calculates the next index to be scanned in the right way:
+				//This calculates the next index to be scanned in the right way, by moving to the free block:
 
 				//'children_blocks' is how many blocks of children (or grandchildren)
 				// the first free parent i found earlier has on the current level i am in
 				//with 'subtree_blocks' blocks in each of its two subtrees
 				int children_blocks = 1<<(count+1);
-	                          int subtree_blocks = children_blocks/2;
+	                        int subtree_blocks = children_blocks/2;
 
 
-				//i store in the variable 'next' the free parents' subtree in which my current node is,starting from 0
+				//i store in the variable 'next' the free parents' subtree in which my current index is,starting from 0
 				//to do this i just have to divide the current offset by subtree_blocks
 				next = startIdx(scan)/subtree_blocks; // it can only be 0 or 1
 
-				//calculate the new offset so i can move to next subtree
+				//calculate the new offset of the next index to be scanned
 				int new_offset = (next+1)*subtree_blocks;
 
 				//now, i can calculate the new index

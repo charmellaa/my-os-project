@@ -19,6 +19,7 @@ int main(int argc, char** argv) {
                       MIN_BUCKET_SIZE);
   printf("DONE\n");
   BuddyAllocator* a = &alloc;
+  printf("\n----MALLOC----\n");
   void* p1 = BuddyAllocator_malloc(&alloc, 509);
   printf("Address allocated: %p\n", p1);
   //just checking
@@ -46,16 +47,16 @@ int main(int argc, char** argv) {
   void* p5 = BuddyAllocator_malloc(&alloc, 88);
   printf("Address allocated: %p\n", p5);
   BitMap_print(&a->bitmap_tree);
-  printf("\n------\n");
+  printf("\n\n");
  
-
+  printf("\n----FREE----\n");
   BuddyAllocator_free(&alloc, p3);
   BitMap_print(&a->bitmap_tree);
   printf("\n------\n");
   BuddyAllocator_free(&alloc, p5);
   BitMap_print(&a->bitmap_tree);
-  printf("\n------\n");
-
+  printf("\n\n");
+  printf("----TEST 3: SUCCESS!----\n");
  
 
 }
