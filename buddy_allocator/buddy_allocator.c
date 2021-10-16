@@ -52,7 +52,7 @@ void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   int memory_size = (1<<alloc->num_levels)*alloc->min_bucket_size; 
   //checking if size requested is bigger than memory available
   if (new_size > memory_size) {
-	printf("Not enough memory! Allocating failed.\n");
+	printf("Not enough memory! Allocation failed.\n");
 	return NULL; 
 	}
   //if everything's ok, i start at the first level
@@ -116,10 +116,7 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 				//printf("Index %d is occupied\n", parent);
 				count++; 
 				parent = parentIdx(parent); } //check parents above
-			else {
-				//next = buddyIdx(parent*2); ----> it generates an endless loop :(
-				break; //i found the first parent with bit 0; i can now exit the loop			
-				}
+			else { parent = parentIdx(parent); }
 			}  
 		//check children
 		//if parents & children are free
@@ -150,7 +147,8 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 				// the first free parent i found earlier has on the current level i am in
 				//with 'subtree_blocks' blocks in each of its two subtrees
 				int children_blocks = 1<<(count+1);
-				int subtree_blocks = children_blocks/2;
+	                          int subtree_blocks = children_blocks/2;
+
 
 				//i store in the variable 'next' the free parents' subtree in which my current node is,starting from 0
 				//to do this i just have to divide the current offset by subtree_blocks

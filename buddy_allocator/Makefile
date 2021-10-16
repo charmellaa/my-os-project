@@ -9,7 +9,7 @@ HEADERS=bit_map.h buddy_allocator.h
 
 LIBS=libbuddy.a
 
-BINS=buddy_allocator_test allocator_test test_1
+BINS=buddy_allocator_test allocator_test_1 allocator_test_2 allocator_test_3
 
 .phony: clean all
 
@@ -27,10 +27,13 @@ libbuddy.a: $(OBJS)
 buddy_allocator_test: buddy_allocator_test.o $(LIBS)
 	$(CC) $(CCOPTS) -o $@ $^ -lm
 
-allocator_test: allocator_test.o $(LIBS)
+allocator_test_1: allocator_test_1.o $(LIBS)
 	$(CC) $(CCOPTS) -o $@ $^ -lm
 
-test_1: test_1.o $(LIBS)
+allocator_test_2: allocator_test_2.o $(LIBS)
+	$(CC) $(CCOPTS) -o $@ $^ -lm
+
+allocator_test_3: allocator_test_3.o $(LIBS)
 	$(CC) $(CCOPTS) -o $@ $^ -lm
 
 

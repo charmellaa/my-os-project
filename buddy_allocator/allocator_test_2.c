@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
   printf("---------------\n");
   void* p5 = BuddyAllocator_malloc(&alloc, 25);
   printf("---------------\n");
-  void* p6 = BuddyAllocator_malloc(&alloc, 128);
+  BuddyAllocator_malloc(&alloc, 128);
   printf("---------------\n Now let's free\n");
   BuddyAllocator_free(&alloc, p1);
   printf("---------------\n");
@@ -54,6 +54,6 @@ int main(int argc, char** argv) {
   printf("---------------\n");
   BuddyAllocator_free(&alloc, p2);
   printf("---------------\n");
-  printf("TEST 1: SUCCESS!\n");
+  printf("TEST 2: SUCCESS!\n");
 
 }
