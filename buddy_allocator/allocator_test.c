@@ -24,6 +24,8 @@ int main(int argc, char** argv) {
   //just checking
   //printf("index allocated %d\n", *(int*)((char*)p1 - 4));
   BitMap_print(&a->bitmap_tree);
+ BitMap_print2(&a->bitmap_tree);
+  BitMap_print3(&a->bitmap_tree);
   printf("\n------\n");
   
 
@@ -31,29 +33,41 @@ int main(int argc, char** argv) {
   printf("Address allocated: %p\n", p2);
   //printf("index allocated %d\n", *(int*)((char*)p2 - 4));
   BitMap_print(&a->bitmap_tree);
+  BitMap_print2(&a->bitmap_tree);
+  BitMap_print3(&a->bitmap_tree);
   printf("\n------\n");
 
   void* p3 = BuddyAllocator_malloc(&alloc,200);
   printf("Address allocated: %p\n", p3);
   BitMap_print(&a->bitmap_tree);
+  BitMap_print2(&a->bitmap_tree);
+  BitMap_print3(&a->bitmap_tree);
   printf("\n------\n");
 
   void* p4 = BuddyAllocator_malloc(&alloc,32);
   printf("Address allocated: %p\n", p4);
   BitMap_print(&a->bitmap_tree);
+  BitMap_print2(&a->bitmap_tree);
+  BitMap_print3(&a->bitmap_tree);
   printf("\n------\n");
 
   void* p5 = BuddyAllocator_malloc(&alloc, 88);
   printf("Address allocated: %p\n", p5);
   BitMap_print(&a->bitmap_tree);
+  BitMap_print2(&a->bitmap_tree);
+  BitMap_print3(&a->bitmap_tree);
   printf("\n------\n");
  
 
   BuddyAllocator_free(&alloc, p3);
   BitMap_print(&a->bitmap_tree);
+  BitMap_print2(&a->bitmap_tree);
+  BitMap_print3(&a->bitmap_tree);
   printf("\n------\n");
   BuddyAllocator_free(&alloc, p5);
   BitMap_print(&a->bitmap_tree);
+  BitMap_print2(&a->bitmap_tree);
+  BitMap_print3(&a->bitmap_tree);
   printf("\n------\n");
 
  

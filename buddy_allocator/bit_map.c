@@ -89,9 +89,9 @@ int BitMap_checkChildren(BitMap* bit_map, int idx) {
 void BitMap_print(BitMap* bitmap) {
 	int num_bits = bitmap->num_bits;
 	int i, j;
-	for (i = 0; i<num_bits; i++) {
-		if (i==0) {printf("\n");}
-		else {
+	for (i = 1; i<num_bits; i++) {
+		//if (i==0) {printf("\n");}
+		
 		if (i==1<<levelIdx(i)) {
 			printf("LEVEL %d: ", levelIdx(i));
 		        for (j = 1; j<num_bits/(1<<(levelIdx(i)+1)); j++) {
@@ -104,8 +104,23 @@ void BitMap_print(BitMap* bitmap) {
 			printf("%d", BitMap_bit(bitmap, i));
 			for (j=1; j<num_bits/(1<<(levelIdx(i))); j++) {
 				printf(" "); }
-			}}
+			}
 	}
 	printf("\n");
 
 }
+
+void BitMap_print2(BitMap* bitmap) {
+	for (int i=0; i<bitmap->num_bits; i++) {
+		printf("%d", BitMap_bit(bitmap, i));
+	}
+	printf("\n");
+}
+
+void BitMap_print3(BitMap* bitmap) {
+	uint8_t *buffer = bitmap->buffer;
+	for(int i = 0; i<bitmap->buffer_size; i++) {
+		printf("%d %d\n", i, buffer[i]);
+	}
+}
+	

@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
   printf("Bitmap: I should see a tree of 1s\n");
   BitMap_print(&a->bitmap_tree);
   printf("-----------------------\n");
-  printf("The following mallocs should fail\n");
+  printf("The following malloc calls should fail\n");
   printf("---------------\n");
   void* p5 = BuddyAllocator_malloc(&alloc, 25);
   printf("---------------\n");
@@ -47,13 +47,13 @@ int main(int argc, char** argv) {
   printf("-----------------------\n");
   printf("Bitmap: I should see a tree of 0s\n");
   BitMap_print(&a->bitmap_tree);
-  printf("-----------------------\n");
-  printf("The following frees should fail\n");
+  printf("---------------------------\n");
+  printf("The following free calls should fail\n");
   printf("---------------\n");
   BuddyAllocator_free(&alloc, p5);
   printf("---------------\n");
   BuddyAllocator_free(&alloc, p2);
   printf("---------------\n");
-  printf("test: SUCCESS!\n");
+  printf("TEST 1: SUCCESS!\n");
 
 }
