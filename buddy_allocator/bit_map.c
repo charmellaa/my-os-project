@@ -90,7 +90,6 @@ void BitMap_print(BitMap* bitmap) {
 	int num_bits = bitmap->num_bits;
 	int i, j;
 	for (i = 1; i<num_bits; i++) {
-		//if (i==0) {printf("\n");}
 		
 		if (i==1<<levelIdx(i)) {
 			printf("LEVEL %d: ", levelIdx(i));

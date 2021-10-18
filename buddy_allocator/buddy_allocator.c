@@ -81,15 +81,10 @@ void* BuddyAllocator_malloc(BuddyAllocator* alloc, int size) {
   //address of block chosen 
   int offset = startIdx(spot);
   char* address = alloc->memory + (offset*block_size);
-  //printf("Original given address is %p\n", address);
  
   //write the index on the first 4 bytes of the block chosen
   *((int*) address) = spot;
 
-  //just checking
-  //printf("index allocated %d\n", *((int*)address));
-
-   //BitMap_print(&alloc->bitmap_tree);
   //we return the address + sizeof(int);
   printf("\t Address of newly allocated block: %p\n", address+4);
   return (void*) (address+4);
@@ -159,9 +154,8 @@ int BuddyAllocator_getBuddy(BuddyAllocator* alloc, int level) {
 				//now, i can calculate the new index
 				scan = firstIdx+new_offset;
 				
-				//checking: if new 'scan' is greater than lastIdx, 
-				//i should be exiting this huge while loop			
-				//printf("Next index to be checked is: %d \n", scan);
+				//if new 'scan' is greater than lastIdx, 
+				//i should be exiting this huge while loop
 			}
 			else {
 				scan++; //children not free, scan next node
@@ -191,11 +185,8 @@ void BuddyAllocator_releaseBuddy(BuddyAllocator* alloc, int index) {
 		return;
 	}
 
-	//check if children are free
-	if (!BitMap_checkChildren(&alloc->bitmap_tree,index)) {
-		printf("ERROR: You can't free this block: occupied child found..\n");
-		return;
-	}
+	//just to make sure, check if children are free
+	assert(BitMap_checkChildren(&alloc->bitmap_tree,index));
 
 	//we can set the bit to 0
 	BitMap_setBit(&alloc->bitmap_tree, index, 0);

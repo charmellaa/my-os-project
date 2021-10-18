@@ -22,15 +22,12 @@ int main(int argc, char** argv) {
   printf("\n----MALLOC----\n");
   void* p1 = BuddyAllocator_malloc(&alloc, 509);
   printf("Address allocated: %p\n", p1);
-  //just checking
-  //printf("index allocated %d\n", *(int*)((char*)p1 - 4));
   BitMap_print(&a->bitmap_tree);
   printf("\n------\n");
   
 
   void* p2 = BuddyAllocator_malloc(&alloc, 50);
   printf("Address allocated: %p\n", p2);
-  //printf("index allocated %d\n", *(int*)((char*)p2 - 4));
   BitMap_print(&a->bitmap_tree);
   printf("\n------\n");
 
